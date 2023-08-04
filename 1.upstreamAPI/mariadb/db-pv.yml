@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: db-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: db-storage-class
+  capacity:
+    storage: 1Gi # 스토리지 용량 크기
+  accessModes:
+    - ReadWriteOnce # 하나의 Pod에서만 access가 가능하도록 설정, ReadWriteMany는 여러개 노드
+  hostPath:
+    path: "/Users/edwin/codecode/database/k8s/maria" # Host에 저장될 스토리지 공간

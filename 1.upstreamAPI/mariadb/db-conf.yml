@@ -1,0 +1,6 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spring-info
+data:
+  db-source: jdbc:mariadb://mariadb:3306/es?serverTimezone=Asia/Seoul&autoReconnect=true&validationQuery=select 1
