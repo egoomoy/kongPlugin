@@ -7,7 +7,7 @@ local TokenHandler = {
 }
 
 function TokenHandler:access(conf)
-  kong.log.inspect(conf)
+  -- kong.log.inspect(conf)
   
   local httpc = http.new()
   httpc:connect(conf.auth_host, conf.auth_port)
@@ -34,8 +34,6 @@ function TokenHandler:access(conf)
     }),
   })
 
-
-
   local reader = res.body_reader
   local buffer_size = 16384
   local rstl = ''
@@ -50,8 +48,7 @@ function TokenHandler:access(conf)
       end
   until not buffer
 
-  kong.log.inspect(rstl)
-
+  -- kong.log.inspect(rstl)
 
   if not res then
     kong.log.err("Failed to call auth_endpoint:", err)
