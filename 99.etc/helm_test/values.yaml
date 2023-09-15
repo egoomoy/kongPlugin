@@ -1,0 +1,62 @@
+---
+deployment:
+  kong:
+    enabled: true
+  serviceAccount:
+    create: true
+
+env:
+  nginx_worker_processes: "2"
+  anonymous_reports: "off"
+
+admin:
+  enabled: true
+  type: NodePort
+  annotations: {}
+
+  http:
+    enabled: true
+
+  tls:
+    enabled: true
+    parameters: []
+
+proxy:
+  enabled: true
+  type: LoadBalancer
+
+  labels:
+    enable-metrics: "true"
+
+  http:
+    enabled: true
+    parameters: []
+
+  tls:
+    enabled: true
+    parameters: []
+
+ingressController:
+  enabled: true
+
+  args:
+    - --anonymous-reports=false
+
+  admissionWebhook:
+    enabled: false
+
+  ingressClass: kong
+  ingressClassAnnotations: {}
+
+  rbac:
+    create: true
+
+plugins:
+  configMaps:
+    - name: kong-plugin-myheader
+      pluginName: myheader
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 5

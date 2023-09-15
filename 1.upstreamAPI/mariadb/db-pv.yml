@@ -12,4 +12,5 @@ spec:
   accessModes:
     - ReadWriteOnce # 하나의 Pod에서만 access가 가능하도록 설정, ReadWriteMany는 여러개 노드
   hostPath:
-    path: "/Users/edwin/codecode/database/k8s/maria" # Host에 저장될 스토리지 공간
+    path: "/Users/plant/CodeFactory/database/k8s/maria" # Host에 저장될 스토리지 공간
+# 1-1. DB/Users/plant/CodeFactory/kongPlugin/1.upstreamAPI
