@@ -20,7 +20,7 @@ kubectl exec -it mariadb-c5bd659b8-g9zkm -- bash
 #1-2 upstream 배포
 $HOME/CodeFactory/kongPlugin/1.upstreamAPI
 kubectl apply -f backend
-kubectl apply -f backend/userservice.yml
+kubectl apply -f backend/authmodule.yml
 
 
 #2 플러그인 만들기
@@ -29,6 +29,8 @@ kubectl create namespace kong
 kubectl create configmap kong-plugin-myheader --from-file=myheader -n kong
 kubectl create configmap kong-plugin-custom-auth --from-file=custom-auth -n kong
 # kubectl delete configmap kong-plugin-custom-auth  -n kong
+
+kubectl delete configmap kong-plugin-custom-auth  -n kong
 
 #3
 $HOME/CodeFactory/kongPlugin/3.kong_install
@@ -48,7 +50,7 @@ kubectl delete all -l app=mariadb
 # etc
 kubectl get pods -l app=mariadb
 kubectl exec -it mariadb-c5bd659b8-g9zkm -- bash
-kubectl port-forward  mariadb-c5bd659b8-zxs7w 3307:3306
+kubectl port-forward  mariadb-c5bd659b8-fz4x6 3307:3306
 mysql -u root -p
 
 

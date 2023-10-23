@@ -9,6 +9,19 @@ env:
   nginx_worker_processes: "2"
   anonymous_reports: "off"
 
+# db는 별도로 다시 확인 할 것 서브차트 방식과 전통적인 설치형을 env에 두는 방식이 있는데 당연히 운영에서는 후자..일 듯
+# postgresql:
+#   enabled: true
+#   auth:
+#     username: kong
+#     database: kong
+#   image:
+#     tag: 13.11.0-debian-11-r20
+#   service:
+#     ports:
+#       postgresql: "5432"
+      
+
 admin:
   enabled: true
   type: NodePort
@@ -39,8 +52,8 @@ proxy:
 ingressController:
   enabled: true
 
-  args:
-    - --anonymous-reports=false
+  args: 
+  - --anonymous-reports=false
 
   admissionWebhook:
     enabled: false
@@ -58,5 +71,5 @@ plugins:
 
 autoscaling:
   enabled: true
-  minReplicas: 3
-  maxReplicas: 5
+  minReplicas: 1
+  maxReplicas: 1

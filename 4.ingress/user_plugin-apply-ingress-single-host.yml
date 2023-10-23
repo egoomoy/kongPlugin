@@ -3,9 +3,9 @@ kind: KongPlugin
 metadata:
   name: custom-auth
 config:
-  auth_host: "userservice.default" # default namespace의 testapi serveice
+  auth_host: "authmodule.default" # default namespace의 testapi serveice
   auth_port: 8080
-  auth_urlpath: "/user-service/api/v1/role-authorizations/check"
+  auth_urlpath: "/auth-module/api/v1/role-authorizations/check"
 plugin: custom-auth
 ---
 apiVersion: networking.k8s.io/v1
@@ -41,9 +41,9 @@ spec:
                 port:
                   number: 80
           - pathType: Prefix
-            path: /user-service
+            path: /auth-module
             backend:
               service:
-                name: userservice
+                name: authmodule
                 port:
                   number: 8080

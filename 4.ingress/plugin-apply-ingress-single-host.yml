@@ -41,9 +41,9 @@ spec:
                 port:
                   number: 80
           - pathType: Prefix
-            path: /user-service
+            path: /auth-module
             backend:
               service:
-                name: userservice
+                name: authmodule
                 port:
                   number: 8080
