@@ -47,3 +47,10 @@ spec:
                 name: authmodule
                 port:
                   number: 8080
+          - pathType: Prefix
+            path: /cms-module
+            backend:
+              service:
+                name: cmsmodule
+                port:
+                  number: 8080

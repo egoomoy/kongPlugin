@@ -10,20 +10,15 @@ spec:
       - name: proxy
         env:
         - name: KONG_PLUGINS
-          value: bundled,myheader,custom-auth
+          value: bundled,custom-auth
         - name: KONG_LUA_PACKAGE_PATH
           value: "/opt/?.lua;;"
         - name: KONG_LOG_LEVEL
           value: debug
         volumeMounts:
-        - name: kong-plugin-myheader
-          mountPath: /opt/kong/plugins/myheader
         - name: kong-plugin-custom-auth
           mountPath: /opt/kong/plugins/custom-auth
       volumes:
-      - name: kong-plugin-myheader
-        configMap:
-          name: kong-plugin-myheader
       - name: kong-plugin-custom-auth
         configMap:
           name: kong-plugin-custom-auth

@@ -11,9 +11,8 @@ function TokenHandler:access(conf)
   
   local httpc = http.new()
   httpc:connect(conf.auth_host, conf.auth_port)
-  kong.log.inspect(httpc)
 
-  local auth_check_query =  "?httpMethod=" .. kong.request.get_method() .."&&" .."requestPath="..kong.request.get_path()
+  local auth_check_query =  "httpMethod=" .. kong.request.get_method() .."&&" .."requestPath="..kong.request.get_path()
   local jwt_token = kong.request.get_header(conf.token_header)
   local headers = kong.request.get_headers()
 
@@ -23,11 +22,9 @@ function TokenHandler:access(conf)
     headers[conf.token_header] = jwt_token
   end
 
-  -- todo : need to modify shcema (http) : etc... 
-  local auth_check_uri = "http://" ..conf.auth_host .. ":" ..conf.auth_port .. conf.auth_urlpath
-
-  local res, err = httpc:request_uri(auth_check_uri {
+  local res, err = httpc:request({
     method = "GET",
+    path = conf.auth_urlpath,
     headers = headers,
     query = auth_check_query,
     body = json.encode({
@@ -38,13 +35,37 @@ function TokenHandler:access(conf)
     }),
   })
 
-  if not res then
-    ngx.log(ngx.ERR, "request failed: ", err)
-    return
-  end
+  local req_set_header = ngx.req.set_header
 
-  kong.log.debug("http://" ..conf.auth_host .. ":" ..conf.auth_port )
+  kong.log.debug("40")
   kong.log.inspect(res)
+  kong.log.debug("42")
+  kong.log.inspect(req_set_header)
+  kong.log.inspect(res.headers["access_token"])
+  kong.log.debug("44")
+
+
+
+  local reader = res.body_reader
+  local buffer_size = 16384
+  local rstl = ''
+  repeat
+      local buffer, err = reader(buffer_size)
+      if err then
+          ngx.log(ngx.ERR, err)
+          break
+      end
+      if buffer then
+        rstl = rstl .. buffer
+      end
+  until not buffer
+
+  kong.log.inspect(rstl)
+
+  if not res then
+    kong.log.err("Failed to call auth_endpoint:", err)
+    return kong.response.exit(500)
+  end
 
   if res.status ~= 200 then
     if res.status == 500 then
@@ -53,18 +74,10 @@ function TokenHandler:access(conf)
     return kong.response.exit(res.status,  rstl , {
       ["Content-Type"] = "application/json"
     })
-  end
 
-  -- renew access token send to Upstream API & to Client (Front)
-  local renew_access = res.headers["access_token"]
-  local req_set_header = ngx.req.set_header
-  if renew_access ~= nil then 
-    kong.response.set_header("extra-header-for-request", "YANGJINA")
-    req_set_header("Authorization", res.headers["access_token"] )
-    kong.response.set_header("access_token", res.headers["access_token"] )
-  end
 
-  -- TokenHandler 끝 
+
+  end
 end
 
 return TokenHandler
