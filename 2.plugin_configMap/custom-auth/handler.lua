@@ -26,7 +26,7 @@ function TokenHandler:access(conf)
   -- todo : need to modify shcema (http) : etc... 
   local auth_check_uri = "http://" ..conf.auth_host .. ":" ..conf.auth_port .. conf.auth_urlpath
 
-  local res, err = httpc:request_uri(auth_check_uri {
+  local res, err = httpc:request_uri(auth_check_uri, {
     method = "GET",
     headers = headers,
     query = auth_check_query,
@@ -50,7 +50,7 @@ function TokenHandler:access(conf)
     if res.status == 500 then
       kong.log.err("Internal server error", res.status)
     end
-    return kong.response.exit(res.status,  rstl , {
+    return kong.response.exit(res.status,  res.body , {
       ["Content-Type"] = "application/json"
     })
   end
