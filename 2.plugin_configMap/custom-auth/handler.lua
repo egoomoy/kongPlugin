@@ -26,6 +26,7 @@ function TokenHandler:access(conf)
   -- todo : need to modify shcema (http) : etc... 
   local auth_check_uri = "http://" ..conf.auth_host .. ":" ..conf.auth_port .. conf.auth_urlpath
 
+  -- http://localhost:80/auth-module/api/v1/role-authorizations/check?httpMethod=GET&requestPath=/cms-module/api/v1/contents
   local res, err = httpc:request_uri(auth_check_uri, {
     method = "GET",
     headers = headers,
@@ -55,15 +56,16 @@ function TokenHandler:access(conf)
     })
   end
 
+  -- 인가 확인 끝
+
   -- renew access token send to Upstream API & to Client (Front)
-  local renew_access = res.headers["access_token"]
+  local renew_access = res.headers["access-token"]
   local req_set_header = ngx.req.set_header
   if renew_access ~= nil then 
-    kong.response.set_header("extra-header-for-request", "YANGJINA")
-    req_set_header("Authorization", res.headers["access_token"] )
-    kong.response.set_header("access_token", res.headers["access_token"] )
+    -- kong.response.set_header("extra-header-for-request", "YANGJINA")
+    req_set_header("Authorization", renew_access) -- upstream api 로 흘리기
+    kong.response.set_header("access-token", renew_access) -- front로 흘리기
   end
-
   -- TokenHandler 끝 
 end
 
