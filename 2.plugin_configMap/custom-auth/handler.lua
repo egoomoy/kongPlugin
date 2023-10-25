@@ -46,6 +46,8 @@ function TokenHandler:access(conf)
 
   kong.log.debug("http://" ..conf.auth_host .. ":" ..conf.auth_port )
   kong.log.inspect(res)
+  kong.log.debug(res)
+
 
   if res.status ~= 200 then
     if res.status == 500 then
@@ -60,11 +62,19 @@ function TokenHandler:access(conf)
 
   -- renew access token send to Upstream API & to Client (Front)
   local renew_access = res.headers["access-token"]
+  local refresh_token_exp = res.headers["refresh-token-exp"]
+  local set_cookie = res.headers["Set-Cookie"]
+
   local req_set_header = ngx.req.set_header
+  
+  kong.log.debug(set_cookie)
+
   if renew_access ~= nil then 
     -- kong.response.set_header("extra-header-for-request", "YANGJINA")
     req_set_header("Authorization", renew_access) -- upstream api 로 흘리기
     kong.response.set_header("access-token", renew_access) -- front로 흘리기
+    kong.response.set_header("refresh-token-exp", refresh_token_exp) -- front로 흘리기
+    kong.response.set_header("Set-Cookie", set_cookie) -- front로 흘리기
   end
   -- TokenHandler 끝 
 end
