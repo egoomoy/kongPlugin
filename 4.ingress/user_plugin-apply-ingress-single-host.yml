@@ -15,7 +15,7 @@ metadata:
   labels:
     project: snackbar
   annotations:
-    konghq.com/plugins: custom-auth
+    konghq.com/plugins: rate-limit, custom-auth
 spec:
   ingressClassName: kong
   defaultBackend:
