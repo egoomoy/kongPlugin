@@ -22,26 +22,26 @@ $HOME/codecode/kong_plug/1.upstreamAPI
 kubectl apply -f backend
 kubectl apply -f backend/authmodule.yml
 
-
 #2 플러그인 만들기
 $HOME/codecode/kong_plug/2.plugin_configMap
 kubectl create namespace kong
 kubectl delete configmap kong-plugin-custom-auth  -n kong
 kubectl create configmap kong-plugin-custom-auth --from-file=custom-auth -n kong
-
-
-kubectl delete configmap kong-plugin-custom-auth  -n kong
+kubectl apply -f rateLimit.yaml
 
 #3
 $HOME/codecode/kong_plug/3.kong_install
 kustomize build manifest | kubectl apply -f -
 
 #3-2 헬름으로 설치하는 방법
+helm install mykong kong/kong -n kong  -f values.yaml
+helm delete mykong -n kong 
+kubectl get po -n kong
+kubectl get svc -n kong
 
 #4
 $HOME/codecode/kong_plug/4.ingress
 kubectl apply -f user_plugin-apply-ingress-single-host.yml
-
 #kubectl apply -f ingress-single-host.yaml
 #kubectl apply -f plugin-apply-ingress-single-host.yml
 
@@ -52,7 +52,7 @@ kubectl delete all -l app=mariadb
 # etc
 kubectl get pods -l app=mariadb
 kubectl exec -it mariadb-c5bd659b8-g9zkm -- bash
-kubectl port-forward  mariadb-c5bd659b8-fz4x6 3307:3306
+kubectl port-forward  mariadb-c5bd659b8-5ndww 3307:3306
 mysql -u root -p
 
 

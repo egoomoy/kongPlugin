@@ -1,0 +1,74 @@
+---
+deployment:
+  kong:
+    enabled: true
+  serviceAccount:
+    create: true
+
+env:
+  nginx_worker_processes: "2"
+  anonymous_reports: "off"
+
+# db는 별도로 다시 확인 할 것 서브차트 방식과 전통적인 설치형을 env에 두는 방식이 있는데 당연히 운영에서는 후자..일 듯
+# postgresql:
+#   enabled: true
+#   auth:
+#     username: kong
+#     database: kong
+#   image:
+#     tag: 13.11.0-debian-11-r20
+#   service:
+#     ports:
+#       postgresql: "5432"
+
+admin:
+  enabled: true
+  type: NodePort
+  annotations: {}
+
+  http:
+    enabled: true
+
+  tls:
+    enabled: true
+    parameters: []
+
+proxy:
+  enabled: true
+  type: LoadBalancer
+
+  labels:
+    enable-metrics: "true"
+
+  http:
+    enabled: true
+    parameters: []
+
+  tls:
+    enabled: true
+    parameters: []
+
+ingressController:
+  enabled: true
+
+  args:
+    - --anonymous-reports=false
+
+  admissionWebhook:
+    enabled: false
+
+  ingressClass: kong
+  ingressClassAnnotations: {}
+
+  rbac:
+    create: true
+
+plugins:
+  configMaps:
+    - name: kong-plugin-custom-auth
+      pluginName: custom-auth
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 1
